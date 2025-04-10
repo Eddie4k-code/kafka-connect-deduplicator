@@ -1,0 +1,60 @@
+# Maven build directory
+/target/
+
+# Logs
+*.log
+
+# Eclipse IDE files
+.project
+.classpath
+.settings/
+
+# IntelliJ IDEA files
+.idea/
+*.iml
+*.iws
+out/
+
+# VS Code files
+.vscode/
+
+# Mac OS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Maven wrapper
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+mvnw
+mvnw.cmd
+
+# JARs and other binaries
+*.jar
+*.war
+*.ear
+
+# Environment and properties files
+.env
+*.properties.local
+*.env.local
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Coverage and reports
+coverage/
+jacoco.exec
+*.exec
+target/site/
