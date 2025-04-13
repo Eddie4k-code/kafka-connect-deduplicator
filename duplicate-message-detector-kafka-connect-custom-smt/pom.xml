@@ -14,5 +14,45 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+
+
+    <!-- https://mvnrepository.com/artifact/org.apache.kafka/connect-api -->
+  <dependency>
+    <groupId>org.apache.kafka</groupId>
+    <artifactId>connect-api</artifactId>
+    <version>4.0.0</version>
+  </dependency> 
+
+        <!-- https://mvnrepository.com/artifact/org.apache.kafka/connect-transforms -->
+  <dependency>
+    <groupId>org.apache.kafka</groupId>
+    <artifactId>connect-transforms</artifactId>
+    <version>4.0.0</version>
+    <scope>provided</scope>
+  </dependency>
+
   </dependencies>
+
+
+   <build>
+    <plugins>
+      <!-- any other plugins -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

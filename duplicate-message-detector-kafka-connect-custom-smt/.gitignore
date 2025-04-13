@@ -1,0 +1,33 @@
+# Maven target directory
+/target/
+
+# Eclipse / IntelliJ IDEA
+*.iml
+.idea/
+.classpath
+.project
+.settings/
+
+# NetBeans
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+
+# Dependency cache
+.mvn/
