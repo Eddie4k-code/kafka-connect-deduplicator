@@ -58,3 +58,4 @@ coverage/
 jacoco.exec
 *.exec
 target/site/
+/target/*
