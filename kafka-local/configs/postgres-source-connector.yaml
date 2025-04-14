@@ -1,0 +1,18 @@
+{
+  "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+  "transforms.test.unique.key": "order_id",
+  "database.user": "postgres",
+  "database.dbname": "orders",
+  "tasks.max": "1",
+  "transforms": "test",
+  "transforms.test.cache.method": "in_memory",
+  "plugin.name": "pgoutput",
+  "topic.prefix": "test",
+  "database.hostname": "postgres",
+  "database.password": "postgres",
+  "transforms.test.type": "io.github.eddie4k.DuplicateMessageDetector.DuplicateMessageDetector",
+  "key.converter.schemas.enable": "false",
+  "value.converter.schemas.enable": "false",
+  "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+  "value.converter": "org.apache.kafka.connect.json.JsonConverter"
+}

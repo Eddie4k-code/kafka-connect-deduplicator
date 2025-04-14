@@ -60,3 +60,4 @@ jacoco.exec
 target/site/
 /target/*
 ./target/*
+*/postgres-data/*

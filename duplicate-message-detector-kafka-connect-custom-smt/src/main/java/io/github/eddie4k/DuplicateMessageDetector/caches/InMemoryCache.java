@@ -11,12 +11,12 @@ public class InMemoryCache implements Cache {
     private HashMap<Object, Object> cache = new HashMap<>();
 
     @Override
-    public void put(String key, String value) {
+    public void put(Object key, Object value) {
         cache.put(key, value);
     }
 
     @Override
-    public boolean exists(String key) {
+    public boolean exists(Object key) {
         return cache.containsKey(key);
     }
 
