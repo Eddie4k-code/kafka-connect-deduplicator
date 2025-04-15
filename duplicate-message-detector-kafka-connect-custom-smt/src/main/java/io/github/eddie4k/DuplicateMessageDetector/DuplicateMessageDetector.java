@@ -29,6 +29,7 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
     private static final Logger log = LoggerFactory.getLogger(DuplicateMessageDetector.class);
     private String cacheMethod;
     private String uniqueKey;
+    private String fieldSearchStrategy;
 
     private Cache cache;
 
@@ -37,6 +38,7 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
     private interface ConfigName {
         String UNIQUE_KEY = "unique.key";
         String CACHE_METHOD = "cache.method";
+        String FIELD_SEARCH_STRATEGY = "field.search.strategy";
     }
 
     public static final ConfigDef CONFIG_DEF = new ConfigDef()
@@ -48,7 +50,12 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
             ConfigDef.Type.STRING,
             "in_memory",
             ConfigDef.Importance.MEDIUM,
-            "The cache method to use for storing seen messages. Options: " + String.join(", ", supportedMethods));
+            "The cache method to use for storing seen messages. Options: " + String.join(", ", supportedMethods))
+        .define(ConfigName.FIELD_SEARCH_STRATEGY,
+            ConfigDef.Type.STRING,
+            1000,
+            ConfigDef.Importance.HIGH,
+            "The field search strategy to use for searching the unique key. Options: recursive, path");
 
 
 
@@ -59,10 +66,16 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
         SimpleConfig config = new SimpleConfig(CONFIG_DEF, props);
         this.uniqueKey = config.getString(ConfigName.UNIQUE_KEY);
         this.cacheMethod = config.getString(ConfigName.CACHE_METHOD);
+        this.fieldSearchStrategy = config.getString(ConfigName.FIELD_SEARCH_STRATEGY);
 
         /* Make sure the cache method is supported */
         if (!supportedMethods.contains(cacheMethod)) {
             throw new IllegalArgumentException("Unsupported cache method: " + cacheMethod);
+        }
+
+        /* Make sure the field search strategy is supported */
+        if (!fieldSearchStrategy.equals("recursive") && !fieldSearchStrategy.equals("path")) {
+            throw new IllegalArgumentException("Unsupported field search strategy: " + fieldSearchStrategy);
         }
     }
 
@@ -112,6 +125,8 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
             return record;
         }
 
+        log.info(record.toString());
+
         log.info("log fields");
         
 
@@ -123,19 +138,10 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
             log.info("Field: " + field.name());
         });
 
-
-        Object[] test = {"after", "order_id"};
-
-        for (Object field : struct.schema().fields()) {
-            
-        }
-
-        Struct afterStruct = struct.getStruct("after");
-
-        Object uniqueValue = afterStruct.get(uniqueKey);
+        Object uniqueValue = this.fieldSearchStrategy.equals("recursive") ?
+            searchStructRecursive(struct, uniqueKey) :
+            searchPath(uniqueKey.split("\\."), struct);
         
-
-
         if (uniqueValue == null) {
             throw new IllegalArgumentException("Unique key not found in record");
         }
@@ -179,6 +185,54 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
     @Override
     public void close() {
        
+    }
+
+    
+    private Object searchStructRecursive(Struct struct, String fieldName) {
+        if (struct == null) {
+            return null;
+        }
+
+        if (struct.schema().fields().stream().anyMatch(f -> f.name().equals(fieldName))) {
+            return struct.get(fieldName);
+        }
+
+        for (org.apache.kafka.connect.data.Field field : struct.schema().fields()) {
+            Object value = struct.get(field);
+            if (value instanceof Struct) {
+                Object result = searchStructRecursive((Struct) value, fieldName);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
+       
+    }
+
+
+
+
+    private Object searchPath(String[] fieldNames, Struct struct) {
+
+        Object lastSeen = null;
+
+
+        for (String fieldName:  fieldNames) {
+            if (lastSeen == null) {
+                lastSeen = struct.get(fieldName);
+                continue;
+            }  else if (lastSeen instanceof Struct) {
+                    lastSeen = ((Struct)lastSeen).get(fieldName);
+                    continue;
+            } else {
+                return lastSeen;
+            }
+            
+        }
+
+        return lastSeen;
+
     }
 
 }
