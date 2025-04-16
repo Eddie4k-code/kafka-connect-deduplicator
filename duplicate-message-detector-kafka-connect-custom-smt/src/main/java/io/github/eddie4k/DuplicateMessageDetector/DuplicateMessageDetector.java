@@ -9,6 +9,7 @@ import org.apache.kafka.connect.transforms.Transformation;
 import org.apache.kafka.connect.transforms.util.SimpleConfig;
 
 import io.github.eddie4k.DuplicateMessageDetector.caches.InMemoryCache;
+import io.github.eddie4k.DuplicateMessageDetector.searchstrategies.SearchStrategy;
 import io.github.eddie4k.DuplicateMessageDetector.caches.Cache;
 
 import java.util.Arrays;
@@ -30,6 +31,7 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
     private String cacheMethod;
     private String uniqueKey;
     private String fieldSearchStrategy;
+    private SearchStrategy searchStrategy;
 
     private Cache cache;
 
@@ -77,6 +79,9 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
         if (!fieldSearchStrategy.equals("recursive") && !fieldSearchStrategy.equals("path")) {
             throw new IllegalArgumentException("Unsupported field search strategy: " + fieldSearchStrategy);
         }
+
+
+        this.searchStrategy = SearchStrategyFactory.createSearchStrategy(fieldSearchStrategy);
     }
 
     @Override
