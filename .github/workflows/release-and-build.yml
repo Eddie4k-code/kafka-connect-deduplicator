@@ -6,6 +6,12 @@ on:
       - master  # Trigger workflow on pushes to the `main` branch
     # or use 'pull_request' if you want to create tags on PR merges
 
+
+permissions:
+  contents: write 
+  issues: write    
+  pull-requests: write  
+
 jobs:
   build:
     runs-on: ubuntu-latest
