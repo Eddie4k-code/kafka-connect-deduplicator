@@ -36,7 +36,7 @@ jobs:
         cd duplicate-message-detector-kafka-connect-custom-smt
         mvn clean package
     - name: Archive JAR as artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: my-app-artifact
         path: duplicate-message-detector-kafka-connect-custom-smt/target/*.jar
