@@ -10,6 +10,7 @@ import org.apache.kafka.connect.transforms.util.SimpleConfig;
 
 import io.github.eddie4k.DuplicateMessageDetector.caches.InMemoryCache;
 import io.github.eddie4k.DuplicateMessageDetector.searchstrategies.SearchStrategy;
+import io.github.eddie4k.DuplicateMessageDetector.searchstrategies.SearchStrategyFactory;
 import io.github.eddie4k.DuplicateMessageDetector.caches.Cache;
 
 import java.util.Arrays;
@@ -31,7 +32,6 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
     private String cacheMethod;
     private String uniqueKey;
     private String fieldSearchStrategy;
-    private SearchStrategy searchStrategy;
 
     private Cache cache;
 
@@ -78,10 +78,7 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
         /* Make sure the field search strategy is supported */
         if (!fieldSearchStrategy.equals("recursive") && !fieldSearchStrategy.equals("path")) {
             throw new IllegalArgumentException("Unsupported field search strategy: " + fieldSearchStrategy);
-        }
-
-
-        this.searchStrategy = SearchStrategyFactory.createSearchStrategy(fieldSearchStrategy);
+        };
     }
 
     @Override
@@ -126,26 +123,20 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
     }
 
     private R applySchema(R record) {
+
+
         if (record.value() == null) {
             return record;
         }
 
         log.info(record.toString());
-
-        log.info("log fields");
         
 
         Struct struct = (Struct) record.value();
 
-        log.info("log fields");
+        var searchStrategy = SearchStrategyFactory.createSearchStrategy("true", fieldSearchStrategy);
 
-        struct.schema().fields().forEach(field -> {
-            log.info("Field: " + field.name());
-        });
-
-        Object uniqueValue = this.fieldSearchStrategy.equals("recursive") ?
-            searchStructRecursive(struct, uniqueKey) :
-            searchPath(uniqueKey.split("\\."), struct);
+        Object uniqueValue = searchStrategy.Search(struct, uniqueKey);
         
         if (uniqueValue == null) {
             throw new IllegalArgumentException("Unique key not found in record");

@@ -20,5 +20,9 @@ public class InMemoryCache implements Cache {
         return cache.containsKey(key);
     }
 
+    public void clear() {
+        cache.clear();
+    }
+
 
 }
