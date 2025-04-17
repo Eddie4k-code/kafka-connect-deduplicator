@@ -41,6 +41,8 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
         String UNIQUE_KEY = "unique.key";
         String CACHE_METHOD = "cache.method";
         String FIELD_SEARCH_STRATEGY = "field.search.strategy";
+        String CLEAR_CACHE_MS = "clear.cache.ms";
+        String ENABLE_CACHE_CLEAR = "enable.cache.clear";
     }
 
     public static final ConfigDef CONFIG_DEF = new ConfigDef()
@@ -55,10 +57,9 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
             "The cache method to use for storing seen messages. Options: " + String.join(", ", supportedMethods))
         .define(ConfigName.FIELD_SEARCH_STRATEGY,
             ConfigDef.Type.STRING,
-            1000,
+            "path",
             ConfigDef.Importance.HIGH,
             "The field search strategy to use for searching the unique key. Options: recursive, path");
-
 
 
 
