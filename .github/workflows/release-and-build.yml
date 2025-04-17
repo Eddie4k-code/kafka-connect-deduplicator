@@ -99,7 +99,7 @@ jobs:
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: {{ env.new_tag }}
+        tag_name: ${{ env.new_tag }}
         files: duplicate-message-detector-kafka-connect-custom-smt/target/*.jar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
