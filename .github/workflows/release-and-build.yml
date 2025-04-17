@@ -54,6 +54,20 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+
+    - name: Get the latest tag
+      id: get_tag
+      run: |
+        latest_tag=$(git describe --tags --abbrev=0)
+        echo "Latest tag: $latest_tag"
+        # Increment the tag version (patch version here)
+        version_parts=(${latest_tag//./ })
+        patch_version=${version_parts[2]}
+        new_patch_version=$((patch_version + 1))
+        new_tag="v${version_parts[0]}.${version_parts[1]}.$new_patch_version"
+        echo "New tag: $new_tag"
+        echo "new_tag=$new_tag" >> $GITHUB_ENV
+
  
 
     - name: Create and push new tag
@@ -62,9 +76,9 @@ jobs:
         cd duplicate-message-detector-kafka-connect-custom-smt
 
         # Create the new tag
-        git tag "v1.0.0"
+        git tag {{ env.new_tag }}
         # Push the tag to the remote repository
-        git push origin "v1.0.0"
+        git push origin {{ env.new_tag }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -79,7 +93,7 @@ jobs:
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: v1.0.0
+        tag_name: {{ env.new_tag }}
         files: duplicate-message-detector-kafka-connect-custom-smt/target/*.jar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
