@@ -34,8 +34,7 @@ jobs:
     - name: Build with Maven
       run: |
         cd duplicate-message-detector-kafka-connect-custom-smt
-        mvn clean install --settings .github/settings.xml
-
+        mvn clean package
     - name: Archive JAR as artifact
       uses: actions/upload-artifact@v2
       with:
