@@ -95,14 +95,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
-  release:
-    needs: create_new_tag
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
