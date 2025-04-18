@@ -59,7 +59,7 @@ jobs:
     - name: Get the latest tag
       id: get_tag
       run: |
-        latest_tag=$(git describe --abbrev=0)
+        latest_tag=$(git ls-remote --tags --sort=committerdate | grep -o 'v.*' | sort -r | head -1)
         echo "Latest tag: $latest_tag"
         # Increment the tag version (patch version here)
         version_parts=(${latest_tag//./ })
