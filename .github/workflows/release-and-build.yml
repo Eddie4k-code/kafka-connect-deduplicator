@@ -81,17 +81,19 @@ jobs:
 
     
 
-    - name: Create and push new tag
+    - name: Tag and Push
       run: |
-        # Navigate to the directory
         cd duplicate-message-detector-kafka-connect-custom-smt
-
+        
         # Create the new tag
-        git tag {{ env.new_tag }}
-        # Push the tag to the remote repository
-        git push origin {{ env.new_tag }}
+        git tag "$new_tag"
+        
+        # Push the new tag to the remote repository
+        git push origin "$new_tag"
       env:
+        new_tag: v1.0.0
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
   release:
     needs: create_new_tag
