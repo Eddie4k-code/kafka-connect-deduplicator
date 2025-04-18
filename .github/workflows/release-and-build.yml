@@ -59,17 +59,27 @@ jobs:
     - name: Get the latest tag
       id: get_tag
       run: |
-        latest_tag=$(git ls-remote --tags --abbrev=0)
-        echo "Latest tag: $latest_tag"
-        # Increment the tag version (patch version here)
-        version_parts=(${latest_tag//./ })
-        patch_version=${version_parts[2]}
-        new_patch_version=$((patch_version + 1))
-        new_tag="v${version_parts[0]}.${version_parts[1]}.$new_patch_version"
+        # Fetch all remote tags
+        latest_tag=$(git ls-remote --tags origin | awk -F'/' '{print $3}' | sort -V | tail -n 1)
+        
+        # Check if the latest_tag is empty (meaning no tags exist)
+        if [ -z "$latest_tag" ]; then
+          new_tag="v1.0.0"  # Default tag when no tags exist
+        else
+          # Extract the version parts (major, minor, patch) from the latest tag
+          version_parts=(${latest_tag//./ })
+          patch_version=${version_parts[2]}
+          new_patch_version=$((patch_version + 1))
+          new_tag="v${version_parts[0]}.${version_parts[1]}.$new_patch_version"
+        fi
+        
+        # Output the new tag
         echo "New tag: $new_tag"
+        
+        # Set the new tag as an environment variable for future steps
         echo "new_tag=$new_tag" >> $GITHUB_ENV
 
- 
+    
 
     - name: Create and push new tag
       run: |
