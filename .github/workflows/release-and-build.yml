@@ -91,7 +91,7 @@ jobs:
         # Push the new tag to the remote repository
         git push origin "$new_tag"
       env:
-        new_tag: v1.0.0
+        new_tag: ${{ env.new_tag }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
