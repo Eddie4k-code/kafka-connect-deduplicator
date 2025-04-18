@@ -27,3 +27,13 @@ Supports both **schemaless** and **schema-based** records, and allows flexible c
 "transforms.Deduplicator.cache.method": "in_memory",
 "transforms.Deduplicator.field.search.strategy": "recursive"
 ```
+
+## Download
+You can download the latest compiled .jar file from the Releases section of this repository.
+
+🔽 Latest Release
+Go to the Releases page.
+
+Find the most recent version (e.g., v1.0.0).
+
+Download the .jar file under Assets.
