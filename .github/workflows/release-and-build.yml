@@ -47,13 +47,6 @@ jobs:
         name: my-app-artifact
         path: duplicate-message-detector-kafka-connect-custom-smt/target/*.jar
 
-  create_new_tag:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
     - name: Download JAR artifact
       uses: actions/download-artifact@v4
       with:
