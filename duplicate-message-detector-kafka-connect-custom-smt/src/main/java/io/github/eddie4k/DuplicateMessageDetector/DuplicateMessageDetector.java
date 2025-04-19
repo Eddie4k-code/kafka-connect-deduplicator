@@ -123,6 +123,7 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
             cache.put(uniqueValue, uniqueValue);
             return record;
         }
+        
 
     }
 
