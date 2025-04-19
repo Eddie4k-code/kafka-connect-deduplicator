@@ -63,7 +63,7 @@ jobs:
         
         # Check if the latest_tag is empty (meaning no tags exist)
         if [ -z "$latest_tag" ]; then
-          new_tag="v1.0.0"  # Default tag when no tags exist
+          new_tag="1.0.0"  # Default tag when no tags exist
         else
           # Extract the version parts (major, minor, patch) from the latest tag
           version_parts=(${latest_tag//./ })

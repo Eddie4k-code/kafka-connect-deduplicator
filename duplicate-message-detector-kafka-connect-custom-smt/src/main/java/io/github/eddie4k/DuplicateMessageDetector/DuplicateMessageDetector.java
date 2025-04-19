@@ -12,6 +12,7 @@ import io.github.eddie4k.DuplicateMessageDetector.caches.InMemoryCache;
 import io.github.eddie4k.DuplicateMessageDetector.searchstrategies.SearchStrategy;
 import io.github.eddie4k.DuplicateMessageDetector.searchstrategies.SearchStrategyFactory;
 import io.github.eddie4k.DuplicateMessageDetector.caches.Cache;
+import io.github.eddie4k.DuplicateMessageDetector.caches.CacheFactory;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -80,6 +81,9 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
         if (!fieldSearchStrategy.equals("recursive") && !fieldSearchStrategy.equals("path")) {
             throw new IllegalArgumentException("Unsupported field search strategy: " + fieldSearchStrategy);
         };
+
+
+        this.initalizeCache();
     }
 
     @Override
@@ -106,7 +110,6 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
         System.out.println("Initializing cache");
         log.info("Initializing cache");
 
-        this.initalizeCache();
 
         String uniqueValue = value.get(uniqueKey).toString();
 
@@ -143,7 +146,6 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
             throw new IllegalArgumentException("Unique key not found in record");
         }
 
-        System.out.println("Initializing cache");
         log.info("Initializing cache");
         this.initalizeCache();
 
@@ -163,13 +165,7 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
     }
 
     private void initalizeCache() {
-        if (cache != null) {
-            return;
-        }
-
-        if (cacheMethod.equals("in_memory")) {
-            this.cache = new InMemoryCache();
-        }
+        CacheFactory.createCache(this.cacheMethod);
     }
 
 
