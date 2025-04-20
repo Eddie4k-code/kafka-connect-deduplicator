@@ -15,6 +15,8 @@ Supports both **schemaless** and **schema-based** records, and allows flexible c
 - Pluggable cache strategies (currently supports: `in_memory`)
 - Automatic cache clearing based on a specified ms interval
 
+⚠️ Warning: In-memory caching is not recommended for production use. Consider using a distributed cache like Redis for better reliability and scalability.
+
 ---
 
 ## 🔧 Configuration
