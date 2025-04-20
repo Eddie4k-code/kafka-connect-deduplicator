@@ -36,9 +36,10 @@ To prevent unbounded memory growth or to support time-based deduplication, this 
 
 ### 🔧 Configuration Options
 
-Property	        Type	Default	    Description
-enable.cache.clear	boolean	false	    Whether to enable automatic cache clearing
-clear.cache.ms	    long	60000	    How often (in milliseconds) to clear the cache
+| Property             | Type    | Default | Description                                      |
+|----------------------|---------|---------|--------------------------------------------------|
+| `enable.cache.clear` | boolean | `false` | Whether to enable automatic cache clearing       |
+| `clear.cache.ms`     | long    | `60000` | How often (in milliseconds) to clear the cache   |
 
 ### ⚠️ Performance Considerations
 The cache is cleared in a background thread, independently of record processing.
