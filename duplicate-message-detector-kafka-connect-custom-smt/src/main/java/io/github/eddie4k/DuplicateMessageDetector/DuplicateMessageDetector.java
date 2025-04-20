@@ -36,6 +36,9 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
 
     private Cache cache;
 
+    private boolean enableCacheClear;
+    private Long clearCacheMs;
+
  
 
     private interface ConfigName {
@@ -60,8 +63,17 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
             ConfigDef.Type.STRING,
             "path",
             ConfigDef.Importance.HIGH,
-            "The field search strategy to use for searching the unique key. Options: recursive, path");
-
+            "The field search strategy to use for searching the unique key. Options: recursive, path")
+        .define(ConfigName.ENABLE_CACHE_CLEAR, 
+            ConfigDef.Type.BOOLEAN,
+            false,
+            ConfigDef.Importance.HIGH,
+            "Enable cache clearing")
+        .define(ConfigName.CLEAR_CACHE_MS,
+            ConfigDef.Type.LONG,
+            1000L,
+            ConfigDef.Importance.HIGH,
+            "The time in milliseconds to wait before clearing the cache. Default: 1000ms");
 
 
     /* Initalize configurations */
@@ -82,8 +94,12 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
             throw new IllegalArgumentException("Unsupported field search strategy: " + fieldSearchStrategy);
         };
 
-
+        /* Initalize cache and check if the user opted in for cache clearing */
         this.initalizeCache();
+
+        if (this.enableCacheClear) {
+            this.StartClearCacheThread(clearCacheMs);
+        }
     }
 
     @Override
@@ -179,6 +195,23 @@ public class DuplicateMessageDetector<R extends ConnectRecord<R>> implements Tra
     @Override
     public void close() {
        
+    }
+
+    /* Starts a thread to clear the cache based on the ms provided by user */
+    public void StartClearCacheThread(Long clearCacheMs) {
+        Thread clearCacheThread = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(clearCacheMs);
+                    log.info("Clearing cache");
+                    cache.clear();
+                } catch (InterruptedException e) {
+                    log.error("Error clearing cache", e);
+                }
+            }
+        });
+        clearCacheThread.start();
+
     }
 
     

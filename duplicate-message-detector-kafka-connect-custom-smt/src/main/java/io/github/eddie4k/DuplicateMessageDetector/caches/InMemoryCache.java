@@ -1,14 +1,15 @@
 package io.github.eddie4k.DuplicateMessageDetector.caches;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.github.eddie4k.DuplicateMessageDetector.caches.Cache;
 
 /* Implementation for a In Memory Cache */
 
 public class InMemoryCache implements Cache {
-
-    private HashMap<Object, Object> cache = new HashMap<>();
+    
+    private ConcurrentHashMap<Object, Object> cache = new ConcurrentHashMap<Object, Object>();
 
     @Override
     public void put(Object key, Object value) {

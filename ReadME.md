@@ -13,6 +13,7 @@ Supports both **schemaless** and **schema-based** records, and allows flexible c
 - Supports both schema-based and schemaless records
 - Supports field search strategies: `recursive` or `path`
 - Pluggable cache strategies (currently supports: `in_memory`)
+- Automatic cache clearing based on a specified ms interval
 
 ---
 
@@ -26,7 +27,27 @@ Supports both **schemaless** and **schema-based** records, and allows flexible c
 "transforms.Deduplicator.unique.key": "after.order_id",
 "transforms.Deduplicator.cache.method": "in_memory",
 "transforms.Deduplicator.field.search.strategy": "recursive"
+"transforms.Deduplicator.
 ```
+
+
+## 🧹 Automatic Cache Clearing
+To prevent unbounded memory growth or to support time-based deduplication, this transformation supports automatic cache clearing at a configurable interval.
+
+### 🔧 Configuration Options
+
+Property	        Type	Default	    Description
+enable.cache.clear	boolean	false	    Whether to enable automatic cache clearing
+clear.cache.ms	    long	60000	    How often (in milliseconds) to clear the cache
+
+### ⚠️ Performance Considerations
+The cache is cleared in a background thread, independently of record processing.
+
+Clearing the cache too frequently (e.g., every few milliseconds) may reduce deduplication accuracy and introduce unnecessary CPU overhead.
+
+A thread-safe cache (like ConcurrentHashMap) is used by default to ensure safe access from multiple threads.
+
+For Redis-based caches, frequent clearing could increase I/O and reduce efficiency — consider using Redis TTLs configuration instead. (Coming soon)
 
 ## Download
 You can download the latest compiled .jar file from the Releases section of this repository.
