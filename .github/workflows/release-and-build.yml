@@ -75,6 +75,7 @@ jobs:
         # Output the new tag
         echo "New tag: $new_tag"
         
+        
         # Set the new tag as an environment variable for future steps
         echo "new_tag=$new_tag" >> $GITHUB_ENV
 
