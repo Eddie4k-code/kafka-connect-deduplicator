@@ -60,7 +60,7 @@ The `field.search.strategy` config allows two strategies for finding the `unique
 
 ### 2. `recursive`
 - **How it works**: Recursively inspects all nested fields until it finds a match for the field name.
-- **Performance**: ❌ Slower. Visits every nested field even if match is found early.
+- **Performance**: ❌ Slower. Visits lots of nested fields before finding match.
 - **Best for**: Inconsistent or deeply nested record structures.
 - **Fails if**: Field name doesn't exist at all (but less brittle than `path`).
 
