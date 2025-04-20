@@ -19,6 +19,24 @@ Supports both **schemaless** and **schema-based** records, and allows flexible c
 
 ---
 
+
+## 💡 Why Use This?
+
+Even though some Kafka Connect connectors and Kafka clients support **exactly-once semantics**, duplicates can and *do* still happen in real-world pipelines due to:
+
+- 🔁 **Connector restarts or rebalancing**
+- 🐛 **Bugs in connectors or custom SMTs (Single Message Transforms)**
+- 🧱 **Reprocessing historical data**
+- ⛓️ **Complex pipelines** with multiple Kafka topics, microservices, or enrichment layers
+- 💥 **Failures during sink operations** (e.g. DB write failure, API timeouts)
+
+This tool provides a **defense-in-depth** layer to:
+- 🚫 Detect and ignore duplicates based on configurable fields
+- 🧪 Enhance observability by surfacing duplicate messages
+- 💼 Help teams working with **non-idempotent sinks** (e.g., databases, payment APIs)
+
+Use it as a **pluggable strategy** for duplicate detection when reliability and correctness are key.
+
 ## 🛠 Configuration
 
 | Config Key              | Type    | Required | Default     | Description |
