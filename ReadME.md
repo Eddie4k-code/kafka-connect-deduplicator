@@ -19,18 +19,80 @@ Supports both **schemaless** and **schema-based** records, and allows flexible c
 
 ---
 
-## 🔧 Configuration
+## 🛠 Configuration
 
-### Kafka Connect config example
+| Config Key              | Type    | Required | Default     | Description |
+|------------------------|---------|----------|-------------|-------------|
+| `unique.key`           | string  | ✅        | -           | The field name used to uniquely identify each record |
+| `cache.method`         | string  | ❌        | `in_memory` | Options: `in_memory`, `redis` |
+| `field.search.strategy`| string  | ✅        | `path`      | Options: `path`, `recursive` |
+| `enable.cache.clear`   | boolean | ❌        | `false`     | Enables periodic cache clearing |
+| `clear.cache.ms`       | long    | ❌        | `1000`      | Interval in milliseconds for clearing the cache |
 
-```json
-"transforms": "Deduplicator",
-"transforms.Deduplicator.type": "io.github.eddie4k.DuplicateMessageDetector.DuplicateMessageDetector",
-"transforms.Deduplicator.unique.key": "after.order_id",
-"transforms.Deduplicator.cache.method": "in_memory",
-"transforms.Deduplicator.field.search.strategy": "recursive"
-"transforms.Deduplicator.
-```
+---
+
+
+## 🔍 Search Strategies
+
+The `field.search.strategy` config allows two strategies for finding the `unique.key` in a message:
+
+### 1. `path` (Default)
+- **How it works**: Uses dot-notation to traverse nested fields (`a.b.c`).
+- **Performance**: ✅ Fastest. Direct lookup without unnecessary recursion.
+- **Best for**: Consistently structured records with known nesting.
+- **Fails if**: Any part of the path doesn't exist.
+
+> 🧪 Example:
+> 
+> With record:
+> ```json
+> {
+>   "outer": {
+>     "inner": {
+>       "id": "abc123"
+>     }
+>   }
+> }
+> ```
+> And `unique.key=outer.inner.id` ➜ value `"abc123"` is found.
+
+---
+
+### 2. `recursive`
+- **How it works**: Recursively inspects all nested fields until it finds a match for the field name.
+- **Performance**: ❌ Slower. Visits every nested field even if match is found early.
+- **Best for**: Inconsistent or deeply nested record structures.
+- **Fails if**: Field name doesn't exist at all (but less brittle than `path`).
+
+> 🧪 Example:
+> With record:
+> ```json
+> {
+>   "meta": {
+>     "tracking": {
+>       "id": "abc123"
+>     }
+>   }
+> }
+> ```
+> And `unique.key=id` ➜ value `"abc123"` is found by deep search.
+
+---
+
+## 🧠 Cache Strategies
+
+### `in_memory`
+- Keeps a simple map of keys in memory.
+- ✅ Fast, but not distributed.
+- ❌ All state is lost on restart.
+
+### `redis` (Planned or in development)
+- Distributed cache.
+- Survives process restarts.
+- Slower than in-memory, but suitable for horizontal scaling.
+
+---
+
 
 
 ## 🧹 Automatic Cache Clearing
