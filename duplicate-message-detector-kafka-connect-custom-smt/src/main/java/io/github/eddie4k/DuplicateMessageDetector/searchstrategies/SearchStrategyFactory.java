@@ -8,9 +8,9 @@ public class SearchStrategyFactory {
     private static HashMap<String, SearchStrategy> cache = new HashMap<String, SearchStrategy>();
 
     public static SearchStrategy createSearchStrategy(String hasSchema, String strategyType) {
-
+        var key = hasSchema.toString() + strategyType;
         
-        var isCached = cache.get(hasSchema.toString() + strategyType);
+        var isCached = cache.get(key);
 
         // Check if the search strategy is already cached
         if (isCached != null) {
@@ -22,19 +22,19 @@ public class SearchStrategyFactory {
        switch (hasSchema) {
             case "true":
                 if (strategyType == "recursive") {
-                    storeInCache(hasSchema.toString() + strategyType, new SchemaRecursiveSearchStrategy());
-                    return new SchemaRecursiveSearchStrategy();
+                    storeInCache(key, new SchemaRecursiveSearchStrategy());
+                    return getFromCache(key);
                 } else {
-                    storeInCache(hasSchema.toString() + strategyType, new SchemaPathSearchStrategy());
-                    return new SchemaPathSearchStrategy();
+                    storeInCache(key, new SchemaPathSearchStrategy());
+                    return getFromCache(key);
                 }
             case "false":
                 if (strategyType == "path") {
-                    storeInCache(hasSchema.toString() + strategyType, new SchemalessPathSearchStrategy());
-                    return new SchemalessPathSearchStrategy();
+                    storeInCache(key, new SchemalessPathSearchStrategy());
+                    return getFromCache(key);
                 } else {
-                    storeInCache(hasSchema.toString() + strategyType, new SchemalessRecursiveSearchStrategy());
-                    return new SchemalessRecursiveSearchStrategy();
+                    storeInCache(key, new SchemalessRecursiveSearchStrategy());
+                    return getFromCache(key);
                 }
             default:
                 throw new IllegalArgumentException("Invalid hasSchema value: " + hasSchema);
@@ -45,5 +45,9 @@ public class SearchStrategyFactory {
 
     private static void storeInCache(String key, SearchStrategy searchStrategy) {
         cache.put(key, searchStrategy);
+    }
+
+    private static SearchStrategy getFromCache(String key) {
+        return cache.get(key);
     }
 }
