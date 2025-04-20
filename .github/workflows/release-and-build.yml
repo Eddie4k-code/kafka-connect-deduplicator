@@ -69,7 +69,7 @@ jobs:
           version_parts=(${latest_tag//./ })
           patch_version=${version_parts[2]}
           new_patch_version=$((patch_version + 1))
-          new_tag="v${version_parts[0]}.${version_parts[1]}.$new_patch_version"
+          new_tag="${version_parts[0]}.${version_parts[1]}.$new_patch_version"
         fi
         
         # Output the new tag
