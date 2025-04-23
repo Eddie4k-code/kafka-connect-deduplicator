@@ -19,6 +19,9 @@ public class CacheFactory {
             case "in_memory":
                 CacheFactory.put(cacheType, new InMemoryCache());
                 return CacheFactory.get(cacheType);
+            case "redis":
+                CacheFactory.put(cacheType, new RedisCache("localhost", 6379));
+                return CacheFactory.get(cacheType);
             default:
                 throw new IllegalArgumentException("Invalid cache type: " + cacheType);
         }
